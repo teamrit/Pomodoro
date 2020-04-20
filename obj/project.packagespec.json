@@ -30,6 +30,24 @@
   },
   "frameworks": {
     "netcoreapp3.1": {
+      "dependencies": {
+        "AdaptiveCards": {
+          "target": "Package",
+          "version": "[1.2.4, )"
+        },
+        "Microsoft.Windows.Compatibility": {
+          "target": "Package",
+          "version": "[3.1.0, )"
+        },
+        "Newtonsoft.Json": {
+          "target": "Package",
+          "version": "[12.0.3, )"
+        },
+        "ToastNotifications": {
+          "target": "Package",
+          "version": "[2.5.1, )"
+        }
+      },
       "imports": [
         "net461",
         "net462",

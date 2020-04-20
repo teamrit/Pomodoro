@@ -7,7 +7,10 @@
         mc:Ignorable="d"
         Title="Pomodoro" Height="450" Width="800"
         WindowStyle="None"
-        AllowsTransparency="False">
+        AllowsTransparency="False"
+        MouseDown="Window_MouseDown"
+        PreviewLostKeyboardFocus="Window_PreviewLostKeyboardFocus"
+>
     <Grid Background="#FF292929">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*" />
@@ -17,14 +20,14 @@
             <RowDefinition Height="1*" />
             <RowDefinition />
         </Grid.RowDefinitions>
-        <TextBlock TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="80"
+        <TextBlock TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="100"
                    Padding="20 20 20 20">
-            <TextBlock Name="minutes" Foreground="White">25</TextBlock>
+            <TextBlock x:Name="minuteText" Text="{Binding Path=Countdown}" Foreground="White">25</TextBlock>
             <TextBlock Foreground="White">:</TextBlock>
-            <TextBlock Name="seconds" Foreground="White">00</TextBlock>
+            <TextBlock x:Name="secondText" Foreground="White">00</TextBlock>
         </TextBlock>
         <Button Click="StartButtonClick" Grid.Row="2" MinWidth="200" MaxWidth="250" Margin="10" Background="#C43D2B">
-            <TextBlock FontSize="25" Foreground="White">Start</TextBlock>
+            <TextBlock FontSize="22" Foreground="White" Text="{Binding Path=Timer}">Start</TextBlock>
         </Button>
     </Grid>
 </Window>
