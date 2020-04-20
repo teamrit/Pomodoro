@@ -4,6 +4,7 @@ using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace Pomodoro
 {
@@ -45,9 +46,16 @@ namespace Pomodoro
 
             return $"{number}";
         }
-
+        
         private void StartButtonClick(object sender, RoutedEventArgs e)
         {
+            var bc = new BrushConverter();
+            var startButton = (Button) FindName("startButton");
+            var startButtonText = (TextBlock) FindName("startButtonText");
+            
+            if (startButton != null) this.startButton.Background = (Brush) bc.ConvertFrom("#F0F66E");
+            if (startButtonText != null) this.startButtonText.Text = "Pause";
+
             _minuteTextBlock = (TextBlock) FindName("minuteText");
             _secondTextBlock = (TextBlock) FindName("secondText");
 
