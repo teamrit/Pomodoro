@@ -33,6 +33,8 @@ msbuild.log
 msbuild.err
 msbuild.wrn
 obj/Debug
+bin/
+obj/
 
 # Visual Studio 2015
 .vs/
