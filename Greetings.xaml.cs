@@ -30,10 +30,10 @@ namespace Pomodoro
         {
             this.DragMove();
         }
-        
+
         private void Window_PreviewLostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e)
         {
-            Window window = (Window)sender;
+            Window window = (Window) sender;
             window.Topmost = true;
         }
 
@@ -46,47 +46,50 @@ namespace Pomodoro
 
             return $"{number}";
         }
-        
+
         private void StartButtonClick(object sender, RoutedEventArgs e)
         {
-            var bc = new BrushConverter();
-            var startButton = (Button) FindName("startButton");
-            var startButtonText = (TextBlock) FindName("startButtonText");
-            
-            if (startButton != null) this.startButton.Background = (Brush) bc.ConvertFrom("#F0F66E");
-            if (startButtonText != null) this.startButtonText.Text = "Pause";
-
-            _minuteTextBlock = (TextBlock) FindName("minuteText");
-            _secondTextBlock = (TextBlock) FindName("secondText");
-
-            ThreadPool.QueueUserWorkItem(ignored =>
+            if (NextTick.Year == 1)
             {
-                var pomodoro = Src.Pomodoro._pomodoro;
-                var startTime = DateTime.Now;
-                var interval = new TimeSpan(0, 0, 1);
-                NextTick = DateTime.Now + interval;
+                var bc = new BrushConverter();
+                var startButton = (Button) FindName("startButton");
+                var startButtonText = (TextBlock) FindName("startButtonText");
 
-                // infinite loop for now
-                while (true)
+                if (startButton != null) this.startButton.Background = (Brush) bc.ConvertFrom("#F0F66E");
+                if (startButtonText != null) this.startButtonText.Text = "Pause";
+
+                _minuteTextBlock = (TextBlock) FindName("minuteText");
+                _secondTextBlock = (TextBlock) FindName("secondText");
+
+                ThreadPool.QueueUserWorkItem(ignored =>
                 {
-                    while (DateTime.Now < NextTick)
+                    var pomodoro = Src.Pomodoro._pomodoro;
+                    var startTime = DateTime.Now;
+                    var interval = new TimeSpan(0, 0, 1);
+                    NextTick = DateTime.Now + interval;
+
+                    // infinite loop for now
+                    while (true)
                     {
-                        Thread.Sleep(NextTick - DateTime.Now);
+                        while (DateTime.Now < NextTick)
+                        {
+                            Thread.Sleep(NextTick - DateTime.Now);
+                        }
+
+                        NextTick += interval;
+                        Countdown = pomodoro - (NextTick - startTime);
+                        Thread.Sleep(100);
+                        _minuteTextBlock.Dispatcher.BeginInvoke(
+                            new Action(() => _minuteTextBlock.Text = AddZeroIfSingleDigit(Countdown.Minute)));
+                        _secondTextBlock.Dispatcher.BeginInvoke(
+                            new Action(() => _secondTextBlock.Text = AddZeroIfSingleDigit(Countdown.Second)));
+
+                        Console.Write("{0}:{1}\n", Countdown.Minute, Countdown.Second);
                     }
-
-                    NextTick += interval;
-                    Countdown = pomodoro - (NextTick - startTime);
-                    Thread.Sleep(100);
-                    _minuteTextBlock.Dispatcher.BeginInvoke(
-                        new Action(() => _minuteTextBlock.Text = AddZeroIfSingleDigit(Countdown.Minute)));
-                    _secondTextBlock.Dispatcher.BeginInvoke(
-                        new Action(() => _secondTextBlock.Text =  AddZeroIfSingleDigit(Countdown.Second)));
-
-                    Console.Write("{0}:{1}\n", Countdown.Minute, Countdown.Second);
-                }
-            });
+                });
+            }
         }
-        
+
         // Minimize to system tray when application is minimized.
         protected override void OnStateChanged(EventArgs e)
         {
@@ -104,6 +107,5 @@ namespace Pomodoro
             this.Hide();
             base.OnClosing(e);
         }
-        
     }
 }

@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Windows.Input;
 
-namespace Pomodoro.Src
+namespace Pomodoro
 {
     /// <summary>
     /// A command whose sole purpose is to 
