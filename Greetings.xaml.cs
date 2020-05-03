@@ -49,45 +49,43 @@ namespace Pomodoro
 
         private void StartButtonClick(object sender, RoutedEventArgs e)
         {
-            if (NextTick.Year == 1)
+            if (NextTick.Year != 1) return;
+            var bc = new BrushConverter();
+            var startButton = (Button) FindName("startButton");
+            var startButtonText = (TextBlock) FindName("startButtonText");
+
+            if (startButton != null) this.startButton.Background = (Brush) bc.ConvertFrom("#F0F66E");
+            if (startButtonText != null) this.startButtonText.Text = "Pause";
+
+            _minuteTextBlock = (TextBlock) FindName("minuteText");
+            _secondTextBlock = (TextBlock) FindName("secondText");
+
+            ThreadPool.QueueUserWorkItem(ignored =>
             {
-                var bc = new BrushConverter();
-                var startButton = (Button) FindName("startButton");
-                var startButtonText = (TextBlock) FindName("startButtonText");
+                var pomodoro = Src.Pomodoro._pomodoro;
+                var startTime = DateTime.Now;
+                var interval = new TimeSpan(0, 0, 1);
+                NextTick = DateTime.Now + interval;
 
-                if (startButton != null) this.startButton.Background = (Brush) bc.ConvertFrom("#F0F66E");
-                if (startButtonText != null) this.startButtonText.Text = "Pause";
-
-                _minuteTextBlock = (TextBlock) FindName("minuteText");
-                _secondTextBlock = (TextBlock) FindName("secondText");
-
-                ThreadPool.QueueUserWorkItem(ignored =>
+                // infinite loop for now
+                while (true)
                 {
-                    var pomodoro = Src.Pomodoro._pomodoro;
-                    var startTime = DateTime.Now;
-                    var interval = new TimeSpan(0, 0, 1);
-                    NextTick = DateTime.Now + interval;
-
-                    // infinite loop for now
-                    while (true)
+                    while (DateTime.Now < NextTick)
                     {
-                        while (DateTime.Now < NextTick)
-                        {
-                            Thread.Sleep(NextTick - DateTime.Now);
-                        }
-
-                        NextTick += interval;
-                        Countdown = pomodoro - (NextTick - startTime);
-                        Thread.Sleep(100);
-                        _minuteTextBlock.Dispatcher.BeginInvoke(
-                            new Action(() => _minuteTextBlock.Text = AddZeroIfSingleDigit(Countdown.Minute)));
-                        _secondTextBlock.Dispatcher.BeginInvoke(
-                            new Action(() => _secondTextBlock.Text = AddZeroIfSingleDigit(Countdown.Second)));
-
-                        Console.Write("{0}:{1}\n", Countdown.Minute, Countdown.Second);
+                        Thread.Sleep(NextTick - DateTime.Now);
                     }
-                });
-            }
+
+                    NextTick += interval;
+                    Countdown = pomodoro - (NextTick - startTime);
+                    Thread.Sleep(100);
+                    _minuteTextBlock.Dispatcher.BeginInvoke(
+                        new Action(() => _minuteTextBlock.Text = AddZeroIfSingleDigit(Countdown.Minute)));
+                    _secondTextBlock.Dispatcher.BeginInvoke(
+                        new Action(() => _secondTextBlock.Text = AddZeroIfSingleDigit(Countdown.Second)));
+
+                    Console.Write("{0}:{1}\n", Countdown.Minute, Countdown.Second);
+                }
+            });
         }
 
         // Minimize to system tray when application is minimized.
